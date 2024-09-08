@@ -47,7 +47,7 @@ def convert_to_parquet_and_partition(data: List[Dict], output_dir: Path) -> None
     df.write_parquet(
         output_dir,
         use_pyarrow=True,
-        pyarrow_options={"partition_cols": ["year", "language"]},
+        pyarrow_options={"partition_cols": ["language", "year"]},
     )
 
 
