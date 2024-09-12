@@ -1,6 +1,7 @@
 import streamlit as st
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
+import random
 # from utils import consolidate_flat_dict
 
 # Utils
@@ -68,7 +69,7 @@ def consolidate_dates(flat_dict):
         'Year': flat_dict.pop('date_revised_Year', None)
     }
 
-    # Add the consolidated date fields back to the dictionary
+    # Add the consolidated date fields back to the dictionarBy
     flat_dict['date'] = consolidated_date
     flat_dict['date_revised'] = consolidated_revised_date
     
@@ -96,27 +97,82 @@ pc = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
 index = pc.Index("pubmed-test")
 
 # Streamlit app
-st.title("PubMed Recommendation App")
+st.title("NutriSearch: Your Personal Research Assistant 🦦")
+
+# App information
+st.markdown("---")
+st.header("About NutriSearch")
+st.info(
+    "This app uses a PubMed-based model to find relevant articles "
+    "based on your input. It queries a vast database of medical and "
+    "scientific literature to retrieve the most pertinent results. "
+    "Perfect for staying up-to-date with the latest research in "
+    "nutrition science and related fields!"
+)
+
+# Instructions
+st.header("How to Use")
+st.markdown(
+    """
+    1. Select a research category or enter your own topic.
+    2. If you choose a category, a random example will appear. Feel free to use or modify it.
+    3. Click "Get Recommendations" to discover relevant articles.
+    4. Expand each result to view detailed information.
+    5. Explore different topics to broaden your knowledge!
+    """
+)
+
 
 # Example inputs
 examples = {
-    "Cancer Research": "Recent advancements in immunotherapy for treating various types of cancer.",
-    "Neurodegenerative Diseases": "The role of protein misfolding in Alzheimer's and Parkinson's diseases.",
-    "Antibiotic Resistance": "Emerging strategies to combat antibiotic-resistant bacteria in hospital settings.",
-    "Genetic Engineering": "CRISPR-Cas9 applications in treating genetic disorders and ethical considerations.",
-    "COVID-19": "Long-term effects of COVID-19 infection and potential treatments for long COVID."
+    "Cancer Research": [
+        "Recent advancements in immunotherapy for treating various types of cancer.",
+        "Targeted therapy approaches using small molecule inhibitors for specific cancer mutations.",
+        "Development of liquid biopsy techniques for early cancer detection and monitoring.",
+        "Combination therapies involving chemotherapy and immunotherapy for improved outcomes.",
+        "Personalized cancer vaccines based on individual tumor genomics."
+    ],
+    "Neurodegenerative Diseases": [
+        "The role of protein misfolding in Alzheimer's and Parkinson's diseases.",
+        "Investigating the gut-brain axis in neurodegenerative disorders.",
+        "Potential neuroprotective effects of exercise and diet in slowing disease progression.",
+        "Gene therapy approaches for treating Huntington's disease and ALS.",
+        "The impact of sleep disorders on the development and progression of neurodegenerative diseases."
+    ],
+    "Antibiotic Resistance": [
+        "Emerging strategies to combat antibiotic-resistant bacteria in hospital settings.",
+        "Development of novel antimicrobial peptides as alternatives to traditional antibiotics.",
+        "Phage therapy as a potential solution for treating multidrug-resistant infections.",
+        "The role of the microbiome in promoting or preventing antibiotic resistance.",
+        "Machine learning approaches for predicting antibiotic resistance patterns."
+    ],
+    "Genetic Engineering": [
+        "CRISPR-Cas9 applications in treating genetic disorders and ethical considerations.",
+        "Gene drive technology for controlling disease-carrying insect populations.",
+        "Synthetic biology approaches for creating artificial organs and tissues.",
+        "Epigenetic editing techniques for modifying gene expression without altering DNA sequences.",
+        "Development of genetically modified crops for improved yield and resistance to climate change."
+    ],
+    "COVID-19": [
+        "Long-term effects of COVID-19 infection and potential treatments for long COVID.",
+        "Development and efficacy of mRNA vaccines against new viral variants.",
+        "The impact of social distancing measures on mental health and strategies for mitigation.",
+        "Artificial intelligence applications in COVID-19 diagnosis and treatment planning.",
+        "Investigating the origins of SARS-CoV-2 and strategies for preventing future pandemics."
+    ]
 }
 
 # Sidebar for examples
 st.sidebar.header("Example Inputs")
-selected_example = st.sidebar.selectbox(
-    "Choose an example input:",
+selected_category = st.sidebar.selectbox(
+    "Choose a research category:",
     [""] + list(examples.keys())
 )
 
 # User input
-if selected_example:
-    user_input = st.text_area("Enter your text here:", value=examples[selected_example], height=100)
+if selected_category:
+    random_example = random.choice(examples[selected_category])
+    user_input = st.text_area("Enter your text here:", value=random_example, height=100)
 else:
     user_input = st.text_area("Enter your text here:", height=100)
 
@@ -155,10 +211,50 @@ if st.button("Get Recommendations"):
     else:
         st.warning("Please enter some text to get recommendations.")
 
-# Add some information about the app
-st.sidebar.header("About")
+
+# Personal message in the sidebar
+st.sidebar.markdown("---")
+st.sidebar.header("💌 Un mensaje especial para tí")
+st.sidebar.markdown(
+    """
+    🌟 Para mi maravillosa, inteligente y talentosa, novia, Fernanda.
+
+    Hice esta app solo para ti, sabiendo cuánto te gusta estudiar e investigar en el campo de la nutrición.
+    Tu pasión por aprender y tu dedicación a tu trabajo me inspiran cada día.
+
+    Espero que esta AI te ayude a descubrir nuevas e interesantes investigaciones en ciencia de la nutrición y más allá.
+    Que alimente tu curiosidad y apoye tu crecimiento como la brillante nutricionista que eres.
+
+    Tu curiosidad y sed de conocimiento es una de las muchas cosas que adoro de ti.
+    ¡Sigue brillando y cambiando vidas con tu conocimiento!
+
+    Con todo mi amor y apoyo,
+    Tu novio, Lewispons 💖
+
+    PD. Hice entrené esta AI usando papers en Inglés, así que vas a tener que escribirle en Inglés
+    Te debo la version en español!
+    """
+)
+
+# App information
+st.sidebar.markdown("---")
+st.sidebar.header("About NutriSearch 🦦")
 st.sidebar.info(
-    "This app uses a PubMed-based model to find similar articles "
-    "based on your input. It queries a Pinecone vector database "
-    "to retrieve the top 5 most relevant results."
+    "This app uses a PubMed-based model to find relevant articles "
+    "based on your input. It queries around 400k, prefiltered by relevance database of medical and "
+    "scientific literature to retrieve the most pertinent results. "
+    "Perfect for staying up-to-date with the latest research in "
+    "nutrition science and related fields!"
+)
+
+# Instructions
+st.sidebar.header("How to Use")
+st.sidebar.markdown(
+    """
+    1. Select a research category or enter your own topic.
+    2. If you choose a category, a random example will appear. Feel free to use or modify it.
+    3. Click "Find Related Research" to discover relevant articles.
+    4. Expand each result to view detailed information.
+    5. Explore different topics to broaden your knowledge!
+    """
 )
