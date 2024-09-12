@@ -84,7 +84,7 @@ def consolidate_flat_dict(flat_dict):
 
 
 
-# Load environment variables
+# Load environment variable
 load_dotenv()
 
 # Initialize SentenceTransformer model
