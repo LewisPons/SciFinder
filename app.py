@@ -176,6 +176,8 @@ if selected_category:
 else:
     user_input = st.text_area("Enter your text here:", height=100)
 
+number_of_recommendations = st.number_input("How many papers do you need",min_value=3, max_value=15,  placeholder="Type a number...")
+
 if st.button("Get Recommendations"):
     if user_input:
         # Encode user input
@@ -184,7 +186,7 @@ if st.button("Get Recommendations"):
         # Query Pinecone
         recommendations = index.query(
             vector=inference,
-            top_k=5,
+            top_k=number_of_recommendations,
             include_values=True,
             include_metadata=True
         )
@@ -197,9 +199,9 @@ if st.button("Get Recommendations"):
         ]
 
         # Display recommendations
-        st.subheader("Top 5 Recommendations:")
+        st.subheader(f"Top {number_of_recommendations} Recommendations:")
         for i, rec in enumerate(parsed_recommendations, 1):
-            st.write(f"**Recommendation {i}**")
+            # st.write(f"**Recommendation {i}**")
             st.write(f"**Title:** {rec.get('abstract_title', 'N/A')}")
             st.write(f"**Authors:** {', '.join(rec.get('authors', 'N/A'))}")
             st.write(f"**Abstract:** {rec.get('abstract_text', 'N/A')}") 
