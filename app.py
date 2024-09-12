@@ -235,26 +235,3 @@ st.sidebar.markdown(
     Te debo la version en español!
     """
 )
-
-# App information
-st.sidebar.markdown("---")
-st.sidebar.header("About NutriSearch 🦦")
-st.sidebar.info(
-    "This app uses a PubMed-based model to find relevant articles "
-    "based on your input. It queries around 400k, prefiltered by relevance database of medical and "
-    "scientific literature to retrieve the most pertinent results. "
-    "Perfect for staying up-to-date with the latest research in "
-    "nutrition science and related fields!"
-)
-
-# Instructions
-st.sidebar.header("How to Use")
-st.sidebar.markdown(
-    """
-    1. Select a research category or enter your own topic.
-    2. If you choose a category, a random example will appear. Feel free to use or modify it.
-    3. Click "Find Related Research" to discover relevant articles.
-    4. Expand each result to view detailed information.
-    5. Explore different topics to broaden your knowledge!
-    """
-)
