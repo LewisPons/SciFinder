@@ -1,8 +1,5 @@
 import streamlit as st
 from pinecone import Pinecone
-from dotenv import load_dotenv
-import os
-import polars as pl
 from sentence_transformers import SentenceTransformer
 # from utils import consolidate_flat_dict
 
@@ -85,7 +82,7 @@ def consolidate_flat_dict(flat_dict):
 
 
 # Load environment variable
-load_dotenv()
+
 
 # Initialize SentenceTransformer model
 @st.cache_resource
@@ -95,7 +92,7 @@ def load_model():
 model = load_model()
 
 # Initialize Pinecone
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+pc = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
 index = pc.Index("pubmed-test")
 
 # Streamlit app
