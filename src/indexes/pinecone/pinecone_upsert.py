@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set up logging configuration
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def convert_arrays_to_lists(data):
@@ -27,7 +29,7 @@ def convert_arrays_to_lists(data):
     return data
 
 
-def flatten_dict(d, parent_key='', sep='_'):
+def flatten_dict(d, parent_key="", sep="_"):
     """
     Recursively flattens nested dictionaries.
     """
@@ -38,7 +40,7 @@ def flatten_dict(d, parent_key='', sep='_'):
             items.extend(flatten_dict(v, new_key, sep=sep).items())
         elif isinstance(v, list):
             for i, item in enumerate(v):
-                items.extend(flatten_dict({f'{new_key}_{i}': item}).items())
+                items.extend(flatten_dict({f"{new_key}_{i}": item}).items())
         else:
             items.append((new_key, v))
     return dict(items)
@@ -63,7 +65,6 @@ def main():
         index = pc.Index("pubmed-test")
     except Exception as e:
         logging.error(f"Failed to initialize Pinecone client: {e}")
-        
 
     # Load embeddings from the parquet file
     embeddings_path = "data/features/pubmed/pinecone/formated/most_cited_papers_1998/most_cited_papers_1998.parquet"
@@ -72,7 +73,6 @@ def main():
         embeddings_df = pd.read_parquet(embeddings_path)
     except Exception as e:
         logging.error(f"Error loading embeddings: {e}")
-        
 
     # Convert embeddings to dictionary format
     logging.info("Converting embeddings to dictionary format.")
@@ -84,7 +84,9 @@ def main():
             record["values"] = record.get("values").tolist()
             record["metadata"] = convert_arrays_to_lists(record["metadata"])
             flattened_metadata = flatten_dict(record["metadata"])
-            record["metadata"] = {k.replace('metadata_', ''): v for k, v in flattened_metadata.items()}
+            record["metadata"] = {
+                k.replace("metadata_", ""): v for k, v in flattened_metadata.items()
+            }
         except Exception as e:
             logging.error(f"Error processing record: {e}")
             continue
@@ -98,7 +100,7 @@ def main():
                 for chunk in chunks(data, batch_size=200)
             ]
             logging.info("Waiting for all upsert requests to complete.")
-            
+
             # Ensure all async requests finish
             [result.get() for result in async_results]
             logging.info("All upsert requests completed successfully.")

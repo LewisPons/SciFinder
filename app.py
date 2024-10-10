@@ -7,10 +7,12 @@ from src.utils.helpers import parse_date
 from src.utils.parsing_utils import consolidate_flat_dict
 from src.utils.constants import EXAMPLES
 
+
 # Initialize SentenceTransformer model
 @st.cache_resource
 def load_model():
     return SentenceTransformer("neuml/pubmedbert-base-embeddings")
+
 
 model = load_model()
 
@@ -45,13 +47,10 @@ st.markdown(
 )
 
 
-
-
 # Sidebar for examples
 st.sidebar.header("Example Inputs")
 selected_category = st.sidebar.selectbox(
-    "Choose a research category:",
-    [""] + list(EXAMPLES.keys())
+    "Choose a research category:", [""] + list(EXAMPLES.keys())
 )
 
 # User input
@@ -61,7 +60,12 @@ if selected_category:
 else:
     user_input = st.text_area("Enter your text here:", height=100)
 
-number_of_recommendations = st.number_input("How many papers do you need",min_value=3, max_value=15,  placeholder="Type a number...")
+number_of_recommendations = st.number_input(
+    "How many papers do you need",
+    min_value=3,
+    max_value=15,
+    placeholder="Type a number...",
+)
 
 if st.button("Get Recommendations"):
     if user_input:
@@ -73,13 +77,17 @@ if st.button("Get Recommendations"):
             vector=inference,
             top_k=number_of_recommendations,
             include_values=True,
-            include_metadata=True
+            include_metadata=True,
         )
         recommendations_dict = recommendations.to_dict()
 
         # Parse recommendations
         parsed_recommendations = [
-            {**consolidate_flat_dict(match["metadata"]), **{"score": match["score"]}, **{"id": match["id"]}} 
+            {
+                **consolidate_flat_dict(match["metadata"]),
+                **{"score": match["score"]},
+                **{"id": match["id"]},
+            }
             for match in recommendations_dict["matches"]
         ]
 
@@ -87,16 +95,18 @@ if st.button("Get Recommendations"):
         st.subheader(f"Top {number_of_recommendations} Recommendations:")
         for i, rec in enumerate(parsed_recommendations, 1):
 
-            parsed_date = parse_date(rec.get('date'))
+            parsed_date = parse_date(rec.get("date"))
 
             # st.write(f"**Recommendation {i}**")
             st.write(f"**Title:** {rec.get('abstract_title', 'N/A')}")
             st.write(f"**Authors:** {', '.join(rec.get('authors', 'N/A'))}")
             st.write(f"**Date:** {parsed_date}")
-            st.write(f"**Abstract:** {rec.get('abstract_text', 'N/A')}") 
+            st.write(f"**Abstract:** {rec.get('abstract_text', 'N/A')}")
             # st.write(f"**Score:** {rec['score']:.4f}")
             # st.write(f"**ID:** {rec['id']}")
-            st.write(f"**Link to pubmed:** [Paper](https://pubmed.ncbi.nlm.nih.gov/{rec['id']}/)")
+            st.write(
+                f"**Link to pubmed:** [Paper](https://pubmed.ncbi.nlm.nih.gov/{rec['id']}/)"
+            )
             st.write("---")
 
     else:
