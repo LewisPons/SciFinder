@@ -62,7 +62,7 @@ def consolidate_dates(flat_dict):
         'Year': flat_dict.pop('date_revised_Year', None)
     }
 
-    # Add the consolidated date fields back to the dictionary
+    # Add the consolidated date fields back to the dictionarBy
     flat_dict['date'] = consolidated_date
     flat_dict['date_revised'] = consolidated_revised_date
     
