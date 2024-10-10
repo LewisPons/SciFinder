@@ -8,7 +8,9 @@ from typing import Dict, List, Optional
 
 import polars as pl
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def load_json(file_path: Path) -> Dict:
@@ -24,11 +26,13 @@ def load_json(file_path: Path) -> Dict:
     return {}
 
 
-def list_json_files(directory: Path, sample_proportion: Optional[float] = None) -> List[Path]:
+def list_json_files(
+    directory: Path, sample_proportion: Optional[float] = None
+) -> List[Path]:
     """
     List JSON files in the given directory, optionally returning a random sample.
     """
-    json_files = list(directory.glob('*.json'))
+    json_files = list(directory.glob("*.json"))
 
     if sample_proportion is not None:
         if not 0 < sample_proportion <= 1:
@@ -51,7 +55,9 @@ def convert_to_parquet_and_partition(data: List[Dict], output_dir: Path) -> None
     )
 
 
-def load_and_process_pubmed_json_files(file_paths: List[Path], output_directory: Path) -> None:
+def load_and_process_pubmed_json_files(
+    file_paths: List[Path], output_directory: Path
+) -> None:
     """
     Load specified JSON files, validate their structure, and convert them to partitioned Parquet files.B
     """
@@ -65,7 +71,9 @@ def load_and_process_pubmed_json_files(file_paths: List[Path], output_directory:
 
         try:
             convert_to_parquet_and_partition(file_data, output_directory)
-            logging.info(f"'{file_name}' has been converted to Parquet and partitioned by year and language.")
+            logging.info(
+                f"'{file_name}' has been converted to Parquet and partitioned by year and language."
+            )
         except Exception as e:
             logging.error(f"Error processing {file_name}: {str(e)}")
 
@@ -79,7 +87,7 @@ def main():
     if not raw_files_paths:
         logging.error("No JSON files found in the specified directory.")
         return
-    
+
     load_and_process_pubmed_json_files(raw_files_paths, output_dir)
     elapsed_time = time.time() - start_time
     logging.info(f"Total processing time: {elapsed_time:.2f} seconds.")
