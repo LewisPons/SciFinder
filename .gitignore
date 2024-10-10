@@ -118,3 +118,5 @@ dmypy.json
 
 
 .streamlit/secrets.toml
+
+.DS_store
